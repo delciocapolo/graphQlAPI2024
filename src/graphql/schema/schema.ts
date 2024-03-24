@@ -71,6 +71,7 @@ export const resolvers = {
 
             if (!schema.safeParse(user).success) {
                 console.log('Os valores nao estao correctos');
+                return;
             }
 
             const data = await databaseConnection.createUser(user);
