@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { IPost, IProfile, IUser } from "../../model/@types/IDatabase";
 import databaseConnection from "../../model/databaseConnection";
 
@@ -59,8 +60,21 @@ export const resolvers = {
     },
     Mutation: {
         async createUser(_: any, { user }: { user: IUser }, ctx: any) {
-            const schema = await databaseConnection.createUser(user);
-            return schema
+            const schema = z.object({
+                email: z.string().email({
+                    message: 'Informe um email valido'
+                }).min(1, {
+                    message: 'O email e necessario'
+                }),
+                name: z.string()
+            });
+
+            if (!schema.safeParse(user).success) {
+                console.log('Os valores nao estao correctos');
+            }
+
+            const data = await databaseConnection.createUser(user);
+            return data
         },
         async createProfile(_: any, { profile }: { profile: IProfile }, ctx: any) {
             const schema = await databaseConnection.createProfile(profile);

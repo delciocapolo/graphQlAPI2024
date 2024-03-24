@@ -8,6 +8,7 @@ class DatabaseConnection {
         this.prisma = new PrismaClient();
     }
 
+    // create methods
     async createUser({ name, email }: IUser) {
         await this.prisma['$connect']();
         const data = await this.prisma['user'].create({
@@ -45,6 +46,22 @@ class DatabaseConnection {
             }
         });
         await this.prisma['$disconnect']();
+
+        return data;
+    }
+
+    // fetch methods
+    async getAllUsers() {
+        const data = await this.prisma['user'].findMany();
+        return data;
+    }
+
+    async getUser(email: string) {
+        const data = await this.prisma['user'].findUnique({
+            where: {
+                email
+            }
+        });
 
         return data;
     }
