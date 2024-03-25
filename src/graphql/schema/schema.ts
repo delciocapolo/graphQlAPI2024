@@ -57,7 +57,8 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
     Query: {
-        getAllUsers: async () => {
+        getAllUsers: async (_: any, args: any, ctx: any) => {
+            console.log(ctx.token);
             return await databaseConnection.getAllUsers();
         },
         getUser: async (_: any, { email }: { email: string }) => {
