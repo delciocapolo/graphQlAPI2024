@@ -1,6 +1,7 @@
-import { z } from "zod";
+import { promise, z } from "zod";
 import { IPost, IProfile, IUser } from "../../model/@types/IDatabase";
 import databaseConnection from "../../model/databaseConnection";
+import { promiseHooks } from "v8";
 
 export const typeDefs = `#graphql
     scalar Date
@@ -38,13 +39,14 @@ export const typeDefs = `#graphql
     }
 
     input CreatePost {
-        authorId: Int
+        authorId: Int!
         title: String!
         content: String
     }
 
     type Query {
-        done: String!
+        getAllUsers: [UserSchema!]!
+        getUser(email: String!): UserSchema!
     }
 
     type Mutation {
@@ -56,7 +58,22 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
     Query: {
-        done: () => "funcionando!"
+        getAllUsers: () => {
+            return Promise.all([databaseConnection.getAllUsers()]);
+        },
+        getUser: (email: string) => {
+            const schema = z.object({
+                email: z.string().email({
+                    message: 'Informe um email valido'
+                })
+            });
+
+            if (!schema.safeParse(email).success) {
+                console.error('Email invalido');
+            }
+
+            return Promise.all([databaseConnection.getUser(email)]);
+        }
     },
     Mutation: {
         async createUser(_: any, { user }: { user: IUser }, ctx: any) {
@@ -72,6 +89,8 @@ export const resolvers = {
             if (!schema.safeParse(user).success) {
                 console.log('Os valores nao estao correctos');
                 return;
+            } else {
+
             }
 
             const data = await databaseConnection.createUser(user);
