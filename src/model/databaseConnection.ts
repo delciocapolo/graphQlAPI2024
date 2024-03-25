@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client/runtime/library";
 import { IPost, IProfile, IUser } from "./@types/IDatabase";
 
 class DatabaseConnection {
@@ -28,6 +27,7 @@ class DatabaseConnection {
 
     async createProfile({ bio, userId }: IProfile) {
         await this.prisma['$connect']();
+
         const data = await this.prisma['profile'].create({
             data: {
                 bio,
@@ -56,19 +56,18 @@ class DatabaseConnection {
 
     // fetch methods
     async getAllUsers() {
-        const data = await this.prisma['user'].findMany();
-        return data;
+        return await this.prisma['user'].findMany();
     }
 
     async getUser(email: string) {
         const data = await this.prisma['user'].findUnique({
             where: {
-                email
+                email,
             }
         });
 
         if (data === null) {
-            return { message: 'User already exists', error: 401 };
+            return { message: 'User dont exists', error: 401 };
         }
 
         return data;

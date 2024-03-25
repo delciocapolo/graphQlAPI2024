@@ -58,57 +58,61 @@ export const typeDefs = `#graphql
 export const resolvers = {
     Query: {
         getAllUsers: async () => {
-            try {
-                return await Promise.resolve(databaseConnection.getAllUsers());
-            } catch (reason) {
-                console.error(reason);
-            }
+            return await databaseConnection.getAllUsers();
         },
-        getUser: (_: any, { email }: { email: string }) => {
+        getUser: async (_: any, { email }: { email: string }) => {
             const schema = z.object({
                 email: z.string().email({
                     message: 'Informe um email valido'
                 })
             });
 
-            if (!schema.safeParse({ email }).success) {
-                console.error('Email invalido');
-                return;
+            const validationResult = schema.safeParse({ email });
+            if (!validationResult.success) {
+                console.error(JSON.stringify({ message: 'Email inválido' }, null, 2));
+                return null;
             }
 
-            return Promise.resolve(databaseConnection.getUser(email));
+            return await databaseConnection.getUser(email);
         }
     },
     Mutation: {
-        createUser(_: any, { user }: { user: IUser }, ctx: any) {
+        async createUser(_: any, { user }: { user: IUser }, ctx: any) {
             const schema = z.object({
                 email: z.string().email({
-                    message: 'Informe um email valido'
+                    message: 'Informe um email válido'
                 }).min(1, {
-                    message: 'O email e necessario'
+                    message: 'O email é necessário'
                 }),
                 name: z.string()
             });
 
-            if (!schema.safeParse(user).success) {
-                console.log('Os valores nao estao correctos');
-                return;
+            const validationResult = schema.safeParse(user);
+
+            if (!validationResult.success) {
+                console.error(JSON.stringify(validationResult, null, 2));
+                return null;
             }
 
-            return Promise.resolve(databaseConnection.createUser(user)).catch((reason) => {
-                console.error(JSON.stringify({ status: 401, message: reason }, null, 2));
-            });
+            try {
+                return await databaseConnection.createUser(user);
+            } catch (error: any) {
+                console.error(JSON.stringify({ status: 401, message: error.message }, null, 2));
+            }
         },
-        createProfile(_: any, { profile }: { profile: IProfile }, ctx: any) {
-            return Promise.resolve(databaseConnection.createProfile(profile)).catch((reason) => {
-                console.error(JSON.stringify({ status: 401, message: reason }, null, 2))
-            });
+        async createProfile(_: any, { profile }: { profile: IProfile }, ctx: any) {
+            try {
+                return await databaseConnection.createProfile(profile);
+            } catch (error: any) {
+                console.error(JSON.stringify({ status: 401, message: error.message }, null, 2));
+            }
         },
-        createPost(_: any, { post }: { post: IPost }, ctx: any) {
-            return Promise.resolve(databaseConnection.createPost(post)).catch((reason) => {
-                console.error(JSON.stringify({ status: 401, message: reason }, null, 2))
-            });
+        async createPost(_: any, { post }: { post: IPost }, ctx: any) {
+            try {
+                return await databaseConnection.createPost(post);
+            } catch (error: any) {
+                console.error(JSON.stringify({ status: 401, message: error.message }, null, 2));
+            }
         }
     }
 };
-
