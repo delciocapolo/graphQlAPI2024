@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client/runtime/library";
 import { IPost, IProfile, IUser } from "./@types/IDatabase";
 
 class DatabaseConnection {
@@ -11,6 +12,9 @@ class DatabaseConnection {
     // create methods
     async createUser({ name, email }: IUser) {
         await this.prisma['$connect']();
+
+        this.getUser(email);
+
         const data = await this.prisma['user'].create({
             data: {
                 name,
@@ -62,6 +66,10 @@ class DatabaseConnection {
                 email
             }
         });
+
+        if (data === null) {
+            return { message: 'User already exists', error: 401 };
+        }
 
         return data;
     }

@@ -1,7 +1,6 @@
-import { promise, z } from "zod";
+import { z } from "zod";
 import { IPost, IProfile, IUser } from "../../model/@types/IDatabase";
 import databaseConnection from "../../model/databaseConnection";
-import { promiseHooks } from "v8";
 
 export const typeDefs = `#graphql
     scalar Date
@@ -58,25 +57,30 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
     Query: {
-        getAllUsers: () => {
-            return Promise.all([databaseConnection.getAllUsers()]);
+        getAllUsers: async () => {
+            try {
+                return await Promise.resolve(databaseConnection.getAllUsers());
+            } catch (reason) {
+                console.error(reason);
+            }
         },
-        getUser: (email: string) => {
+        getUser: (_: any, { email }: { email: string }) => {
             const schema = z.object({
                 email: z.string().email({
                     message: 'Informe um email valido'
                 })
             });
 
-            if (!schema.safeParse(email).success) {
+            if (!schema.safeParse({ email }).success) {
                 console.error('Email invalido');
+                return;
             }
 
-            return Promise.all([databaseConnection.getUser(email)]);
+            return Promise.resolve(databaseConnection.getUser(email));
         }
     },
     Mutation: {
-        async createUser(_: any, { user }: { user: IUser }, ctx: any) {
+        createUser(_: any, { user }: { user: IUser }, ctx: any) {
             const schema = z.object({
                 email: z.string().email({
                     message: 'Informe um email valido'
@@ -89,20 +93,21 @@ export const resolvers = {
             if (!schema.safeParse(user).success) {
                 console.log('Os valores nao estao correctos');
                 return;
-            } else {
-
             }
 
-            const data = await databaseConnection.createUser(user);
-            return data
+            return Promise.resolve(databaseConnection.createUser(user)).catch((reason) => {
+                console.error(JSON.stringify({ status: 401, message: reason }, null, 2));
+            });
         },
-        async createProfile(_: any, { profile }: { profile: IProfile }, ctx: any) {
-            const schema = await databaseConnection.createProfile(profile);
-            return schema;
+        createProfile(_: any, { profile }: { profile: IProfile }, ctx: any) {
+            return Promise.resolve(databaseConnection.createProfile(profile)).catch((reason) => {
+                console.error(JSON.stringify({ status: 401, message: reason }, null, 2))
+            });
         },
-        async createPost(_: any, { post }: { post: IPost }, ctx: any) {
-            const schema = await databaseConnection.createPost(post);
-            return schema;
+        createPost(_: any, { post }: { post: IPost }, ctx: any) {
+            return Promise.resolve(databaseConnection.createPost(post)).catch((reason) => {
+                console.error(JSON.stringify({ status: 401, message: reason }, null, 2))
+            });
         }
     }
 };
