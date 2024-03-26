@@ -1,28 +1,21 @@
 import 'dotenv/config';
-import * as env from './utils/envConfigs';
 import { expressMiddleware } from "@apollo/server/express4";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import express from "express";
 import http from "node:http";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 
-import serverFind from "./graphql/schema/find/serverFind";
-import serverCreate from "./graphql/schema/create/serverCreate";
+import { port, jwtSecret } from './utils/envConfigs';
+import { serverFind } from "./graphql/schema/find/server";
+import { serverCreate } from './graphql/schema/create/server';
 
-const PORT = env.port | 4000;
+const PORT = port | 4000;
 const app = express();
-const httpServer = http.createServer(app);
+export const httpServer = http.createServer(app);
 
-serverFind.addPlugin(ApolloServerPluginDrainHttpServer({ httpServer }));
-serverCreate.addPlugin(ApolloServerPluginDrainHttpServer({ httpServer }));
+await serverFind.start().then(() => { console.log('GRAPHQL FIND SERVER IS RUNNING 📬') });
+await serverCreate.start().then(() => { console.log('GRAPHQL CREATE SERVER IS RUNNING 📬') });
 
-await serverFind.start().then((_) => {
-    console.log('GRAPHQL FIND SERVER IS RUNNING 📬');
-});
-await serverCreate.start().then((_) => {
-    console.log('GRAPHQL CREATE SERVER IS RUNNING 📬');
-});
 
 app.use(cors<cors.CorsRequest>({
     origin: '*',
@@ -32,7 +25,14 @@ app.use(cors<cors.CorsRequest>({
 app.use(express.json({
     limit: '5mb',
     verify(req, res, buf, encoding) {
-        console.log(buf, encoding);
+        // return Buffer.from(
+        //     String(buf)
+        //         .replace(/[<>]/g, '') // remove os simbolos < > do string
+        //         .split(' ') // create um array dividido por espacos
+        //         .slice(1) //remove a palavra Buffer do array
+        //         .reduce((acc, val) => 
+        //             acc.concat(parseInt(val, 10)), [])
+        // )
     },
 }));
 
@@ -45,7 +45,7 @@ app.use('/create',
                     name,
                     email
                 };
-                const token = jwt.sign(payload, env.jwtSecret, {
+                const token = jwt.sign(payload, jwtSecret, {
                     expiresIn: 60 * 60
                 });
                 return {

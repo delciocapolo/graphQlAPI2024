@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import env from 'env-var';
 
 export const jwtExpiresIn: number = env.get('JWT_EXPIRES_IN').required().asIntPositive();

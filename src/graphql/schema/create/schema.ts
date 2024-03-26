@@ -4,16 +4,19 @@ import databaseConnection from "../../../model/databaseConnection";
 import path from "node:path";
 import { readFileSync } from "node:fs";
 import { gql } from "graphql-tag";
+import { DATESCALAR } from "../../utils/dateScalar";
+import { fileURLToPath } from 'node:url';
+
+export const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const typeDefs = gql(
-    readFileSync(path.resolve(__dirname, 'schema.graphql'), {
-        encoding: 'utf-8'
-    })
+    readFileSync(path.resolve(__dirname, 'schema.graphql'), { encoding: 'utf-8' })
 );
 
 export const resolvers = {
+    Date: DATESCALAR,
     Query: {
-        done: () => "Create user route is running"
+        done: () => "Create user route defined"
     },
     Mutation: {
         async createUser(_: any, { user }: { user: IUser }, ctx: any) {
@@ -42,8 +45,3 @@ export const resolvers = {
         }
     }
 };
-
-export default {
-    resolvers,
-    typeDefs
-}

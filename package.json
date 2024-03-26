@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "tsx watch --no-cache ./src/server.mts"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",

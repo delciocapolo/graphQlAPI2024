@@ -1,8 +1,11 @@
-import gql from "graphql-tag";
 import databaseConnection from "../../../model/databaseConnection";
-import { readFileSync } from "fs";
 import path from "path";
+import { readFileSync } from "fs";
+import gql from "graphql-tag";
+import { DATESCALAR } from "../../utils/dateScalar";
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const typeDefs = gql(
     readFileSync(
         path.resolve(__dirname, 'schema.graphql'), {
@@ -11,6 +14,7 @@ export const typeDefs = gql(
 );
 
 export const resolvers = {
+    Date: DATESCALAR,
     Query: {
         getAllUsers: async (_: any, args: any, ctx: any) => {
             return await databaseConnection.getAllUsers();
@@ -20,8 +24,3 @@ export const resolvers = {
         }
     },
 };
-
-export default {
-    resolvers,
-    typeDefs
-}

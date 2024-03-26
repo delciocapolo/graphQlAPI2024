@@ -1,6 +1,6 @@
 import { GraphQLScalarType, Kind } from "graphql";
 
-const dateScalar = new GraphQLScalarType({
+export const DATESCALAR = new GraphQLScalarType({
     name: 'Date',
     description: 'Formato Date, customizado pro GrapQL',
     serialize(value) {
@@ -30,5 +30,3 @@ const dateScalar = new GraphQLScalarType({
         return null;
     }
 });
-
-export default dateScalar;
