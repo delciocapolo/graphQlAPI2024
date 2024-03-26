@@ -1,0 +1,28 @@
+scalar Date
+
+type UserSchema {
+    id: Int!
+    email: String!
+    name: String
+}
+
+type ProfileSchema {
+    id: Int!
+    bio: String
+    userId: Int!
+}
+
+type PostSchema {
+    id: Int!
+    title: String!
+    content: String
+    published: Boolean!
+    authorId: Int!
+    createAt: Date
+    updatedAt: Date
+}
+
+type Query {
+    getAllUsers: [UserSchema!]!
+    getUser(email: String!): UserSchema!
+}

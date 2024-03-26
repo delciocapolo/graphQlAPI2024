@@ -1,0 +1,47 @@
+scalar Date
+
+type UserSchema {
+    id: Int!
+    email: String!
+    name: String
+}
+
+type ProfileSchema {
+    id: Int!
+    bio: String
+    userId: Int!
+}
+
+type PostSchema {
+    id: Int!
+    title: String!
+    content: String
+    published: Boolean!
+    authorId: Int!
+    createAt: Date
+    updatedAt: Date
+}
+
+input CreateUser {
+    name: String
+    email: String!
+}
+
+input CreateProfile {
+    bio: String
+    userId: Int
+}
+
+input CreatePost {
+    authorId: Int!
+    title: String!
+    content: String
+}
+
+type Query {}
+
+type Mutation {
+    createUser(user: CreateUser): UserSchema!
+    createProfile(profile: CreateProfile): ProfileSchema!
+    createPost(post: CreatePost): PostSchema!
+}
