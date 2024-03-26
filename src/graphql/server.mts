@@ -1,4 +1,4 @@
-import env from '../utils/envConfigs';
+import * as env from '../utils/envConfigs';
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import express from "express";
