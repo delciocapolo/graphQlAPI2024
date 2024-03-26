@@ -1,6 +1,5 @@
-import { from, logger } from 'env-var';
-
-const env = from(process.env, {}, logger);
+import 'dotenv/config';
+import env from 'env-var';
 
 export const jwtExpiresIn: number = env.get('JWT_EXPIRES_IN').required().asIntPositive();
 export const jwtSecret: string = env.get('JWT_SECRET').required().asString();

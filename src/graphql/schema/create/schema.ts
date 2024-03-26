@@ -12,7 +12,9 @@ export const typeDefs = gql(
 );
 
 export const resolvers = {
-    Query: {},
+    Query: {
+        done: () => "Create user route is running"
+    },
     Mutation: {
         async createUser(_: any, { user }: { user: IUser }, ctx: any) {
             try {

@@ -1,4 +1,5 @@
-import * as env from '../utils/envConfigs';
+import 'dotenv/config';
+import * as env from './utils/envConfigs';
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import express from "express";
@@ -6,8 +7,8 @@ import http from "node:http";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 
-import serverFind from "./schema/find/serverFind";
-import serverCreate from "./schema/create/server";
+import serverFind from "./graphql/schema/find/serverFind";
+import serverCreate from "./graphql/schema/create/serverCreate";
 
 const PORT = env.port | 4000;
 const app = express();

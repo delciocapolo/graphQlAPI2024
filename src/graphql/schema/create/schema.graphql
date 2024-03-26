@@ -38,7 +38,9 @@ input CreatePost {
     content: String
 }
 
-type Query {}
+type Query {
+    done: String
+}
 
 type Mutation {
     createUser(user: CreateUser): UserSchema!
