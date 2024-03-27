@@ -7,4 +7,7 @@ import { httpServer } from "../../../server.mjs";
 
 export const serverCreate = new ApolloServer<ContextAPI>({
     schema: buildSubgraphSchema({ ...createSchema }),
+    plugins: [
+        ApolloServerPluginDrainHttpServer({ httpServer })
+    ]
 });

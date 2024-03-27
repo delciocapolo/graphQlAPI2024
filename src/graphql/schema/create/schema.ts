@@ -4,7 +4,7 @@ import databaseConnection from "../../../model/databaseConnection";
 import path from "node:path";
 import { readFileSync } from "node:fs";
 import { gql } from "graphql-tag";
-import { DATESCALAR } from "../../utils/dateScalar";
+import { DATESCALAR } from "../../utils/DateScalar";
 import { fileURLToPath } from 'node:url';
 
 export const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -16,24 +16,13 @@ export const httpServer = http.createServer(app);
 await serverFind.start().then(() => { console.log('GRAPHQL FIND SERVER IS RUNNING 📬') });
 await serverCreate.start().then(() => { console.log('GRAPHQL CREATE SERVER IS RUNNING 📬') });
 
-
 app.use(cors<cors.CorsRequest>({
     origin: '*',
     methods: ['POST', 'PUT']
 }));
 
 app.use(express.json({
-    limit: '5mb',
-    verify(req, res, buf, encoding) {
-        // return Buffer.from(
-        //     String(buf)
-        //         .replace(/[<>]/g, '') // remove os simbolos < > do string
-        //         .split(' ') // create um array dividido por espacos
-        //         .slice(1) //remove a palavra Buffer do array
-        //         .reduce((acc, val) => 
-        //             acc.concat(parseInt(val, 10)), [])
-        // )
-    },
+    limit: '15mb',
 }));
 
 app.use('/create',
