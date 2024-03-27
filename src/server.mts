@@ -11,7 +11,7 @@ import { serverCreate } from './graphql/schema/create/server';
 
 const PORT = port | 4000;
 const app = express();
-export const httpServer = http.createServer(app);
+const httpServer = http.createServer(app);
 
 await serverFind.start().then(() => { console.log('GRAPHQL FIND SERVER IS RUNNING 📬') });
 await serverCreate.start().then(() => { console.log('GRAPHQL CREATE SERVER IS RUNNING 📬') });
